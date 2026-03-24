@@ -5,3 +5,5 @@ RELEASE_NOTE.md
 dist/
 .DS_Store
 agent_sync.egg-info/
+.venv/
+venv/
