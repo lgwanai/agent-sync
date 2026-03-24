@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+idea.md
+RELEASE_NOTE.md
+dist/
+.DS_Store
+agent_sync.egg-info/

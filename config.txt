@@ -1,0 +1,5 @@
+PROVIDER=deepseek
+BASE_URL=https://api.deepseek.com/v1
+MODEL=deepseek-chat
+TIMEOUT=60
+OPENAI_API_KEY=sk-233154afcd5546ac8580be71a52fabf0
