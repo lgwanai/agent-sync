@@ -137,17 +137,25 @@ def import_data(app_type="openclaw"):
             return
 
         overwrite_all = False
+        missing_skills = set()
         
         for root, _, files in os.walk(tmpdir):
             for file in files:
                 src_path = os.path.join(root, file)
                 rel_path = os.path.relpath(src_path, tmpdir)
                 
+                skill_name = None
+                target_skill_dir = None
+                
                 if app_type == "workbuddy":
                     # 解析前缀，还原真实路径
                     if rel_path.startswith(".workbuddy"):
                         real_rel = os.path.relpath(rel_path, ".workbuddy")
                         dest_path = os.path.join(base_dir, real_rel)
+                        parts = real_rel.split(os.sep)
+                        if len(parts) >= 2 and parts[0] == "skills":
+                            skill_name = parts[1]
+                            target_skill_dir = os.path.join(base_dir, "skills", skill_name)
                     elif rel_path.startswith("workbuddy"):
                         real_rel = os.path.relpath(rel_path, "workbuddy")
                         dest_path = os.path.join(extra_dir, real_rel)
@@ -155,6 +163,19 @@ def import_data(app_type="openclaw"):
                         continue
                 else:
                     dest_path = os.path.join(base_dir, rel_path)
+                    parts = rel_path.split(os.sep)
+                    if len(parts) >= 3 and parts[0] == "workspace" and parts[1] == "skills":
+                        skill_name = parts[2]
+                        target_skill_dir = os.path.join(base_dir, "workspace", "skills", skill_name)
+
+                # 如果是 Skill 相关的配置，检查目标环境是否已经安装了该 Skill
+                if skill_name and target_skill_dir:
+                    if not os.path.exists(target_skill_dir):
+                        if skill_name not in missing_skills:
+                            print(f"\n[警告] 目标环境中未安装 Skill: {skill_name}")
+                            print(f"请先安装该 Skill 后再进行备份恢复。已跳过恢复 {skill_name} 目录及其相关配置。")
+                            missing_skills.add(skill_name)
+                        continue
 
                 if not os.path.exists(dest_path):
                     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
