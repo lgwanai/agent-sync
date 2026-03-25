@@ -7,3 +7,4 @@ dist/
 agent_sync.egg-info/
 .venv/
 venv/
+config.txt
